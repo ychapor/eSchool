@@ -77,7 +77,6 @@ These variables are used by the application to send password recovery emails
     ```
     java -cp ~/.m2/repository/org/jasypt/jasypt/1.9.2/jasypt-1.9.2.jar org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input="YOUR_DECRYPTED_PASSWORD" password=YOUR_ENCODIG_KEY algorithm=PBEWithMD5AndDES
     ```
-test
 
 ### Run application
 1. Clone the repository:

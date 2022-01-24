@@ -15,7 +15,7 @@ pipeline {
             steps {
                 echo "Testing..."
                 /*
-                withMaven(maven : 'maven3') {
+                withMaven {
                     sh 'mvn test -Dtest=!academy.softserve.eschool.*.*IntegrationTest'
                 }
                 */

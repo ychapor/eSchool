@@ -45,4 +45,22 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            sh '''
+                curl "https://api.GitHub.com/repos/<ychapor>/eSchool/statuses/$GIT_COMMIT?access_token=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" \
+                  -H "Content-Type: application/json" \
+                  -X POST \
+                  -d "{\"state\": \"success\",\"context\": \"continuous-integration/jenkins\", \"description\": \"Jenkins\", \"target_url\": \"https://jenkins.chapor.ml/job/eSchool-test/$BUILD_NUMBER/console\"}"
+            '''
+            }
+        failure {
+            sh '''
+                curl "https://api.GitHub.com/repos/<ychapor>/eSchool/statuses/$GIT_COMMIT?access_token=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" \
+                    -H "Content-Type: application/json" \
+                    -X POST \
+                    -d "{\"state\": \"failure\",\"context\": \"continuous-integration/jenkins\", \"description\": \"Jenkins\", \"target_url\": \"https://jenkins.chapor.ml/job/eSchool-test/$BUILD_NUMBER/console\"}"
+            '''
+        }
+    }
 }

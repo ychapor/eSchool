@@ -132,7 +132,7 @@ fieldset
     background-color: #ffb94b;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fddb6f), to(#ffb94b));
     background-image: -webkit-linear-gradient(top, #fddb6f, #ffb94b);
-    background-image: -moz-linear-gradient(top, #fddb6f, #ffb94b);
+    background-image: -moz-linear-gradient(top, #00db6f, #00b94b);
     background-image: -ms-linear-gradient(top, #fddb6f, #ffb94b);
     background-image: -o-linear-gradient(top, #fddb6f, #ffb94b);
     background-image: linear-gradient(top, #fddb6f, #ffb94b);

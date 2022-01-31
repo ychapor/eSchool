@@ -12,7 +12,7 @@ pipeline{
     stages{
         stage('Integration testing'){
             steps{
-                withMaven(maven : 'maven3'){
+                withMaven {
                     sh 'mvn test -Dtest=academy.softserve.eschool.*.*IntegrationTest'
                 }
             }

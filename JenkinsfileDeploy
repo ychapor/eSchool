@@ -1,14 +1,11 @@
 pipeline {
     agent any
     stages {
-        /*
-        // Stage for running in pipeline script
         stage('SCM checkout') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/azure-devops']], userRemoteConfigs: [[credentialsId: 'eschool-github-ssh-key', url: 'git@github.com:ychapor/eSchool.git']]])
             }
         }
-        */
         stage('Prepaire parameters') {
             options {
               azureKeyVault([

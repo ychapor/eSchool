@@ -1,6 +1,11 @@
 pipeline {
     agent any
     stages {
+        stage('SCM checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/azure-devops']], userRemoteConfigs: [[credentialsId: 'eschool-github-ssh-key', url: 'git@github.com:ychapor/eSchool.git']]])
+            }
+        }
         stage('Compile') {
             steps {
                 withMaven {
@@ -13,6 +18,43 @@ pipeline {
                 withMaven {
                     sh 'mvn test -Dtest=!academy.softserve.eschool.*.*IntegrationTest'
                 }
+            }
+        }
+        stage('SonarQube analysis') {
+            options {
+                azureKeyVault([[envVariable: 'SQ_TOKEN', name: 'sonarqube-token', secretType: 'Secret']])
+            }
+            steps {
+                sh 'docker run -d --name sonarqube -p 9000:9000 \
+	                -v sonarqube_conf:/opt/sonarqube/conf \
+	                -v sonarqube_extensions:/opt/sonarqube/extensions \
+	                -v sonarqube_logs:/opt/sonarqube/logs \
+	                -v sonarqube_data:/opt/sonarqube/data \
+	                sonarqube:8.9.5-community || docker start sonarqube'
+	            sh 'sleep 30'
+	            withMaven {
+		            withSonarQubeEnv('sonarqube') {
+                        sh 'mvn sonar:sonar \
+                            -Dsonar.projectKey=eschool \
+                            -Dsonar.host.url=https://jenkins.chapor.ml/sq \
+                            -Dsonar.login=$SQ_TOKEN \
+                            -Dsonar.exclusions=vendor/**,storage/**,resources/**,**/*.java \
+                            -Dsonar.sources=$WORKSPACE'
+		            }
+	            }
+            }
+        }
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    script {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+                sh 'docker stop sonarqube'
             }
         }
         stage('Build') {

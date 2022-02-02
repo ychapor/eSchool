@@ -31,7 +31,7 @@ pipeline {
 	                -v sonarqube_logs:/opt/sonarqube/logs \
 	                -v sonarqube_data:/opt/sonarqube/data \
 	                sonarqube:8.9.5-community || docker start sonarqube'
-	            sh 'sleep 30'
+	            sh 'while ! wget https://jenkins.chapor.ml/sq >/dev/null 2>&1; do sleep 1; done; sleep 10'
 	            withMaven {
 		            withSonarQubeEnv('sonarqube') {
                         sh 'mvn sonar:sonar \

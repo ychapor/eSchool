@@ -6,16 +6,16 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/azure-devops']], userRemoteConfigs: [[credentialsId: 'eschool-github-ssh-key', url: 'git@github.com:ychapor/eSchool.git']]])
             }
         }
-        stage('Prepaire parameters') {
+        stage('Prepare parameters') {
             options {
-              azureKeyVault([
-                                [envVariable: 'DB_URL', name: 'eschool-db-url-fs', secretType: 'Secret'],
-                                [envVariable: 'DB_USER', name: 'eschool-db-username', secretType: 'Secret'],
-                                [envVariable: 'DB_PASS', name: 'eschool-db-password', secretType: 'Secret'],
-                                [envVariable: 'LB_ADMIN_NAME', name: 'liquibase-admin-name', secretType: 'Secret'],
-                                [envVariable: 'LB_ADMIN_PASS', name: 'liquibase-admin-password', secretType: 'Secret'],
-                                [envVariable: 'PASSWORD_ENC_KEY', name: 'password-encoding-key', secretType: 'Secret']
-              ])
+                azureKeyVault([
+                    [envVariable: 'DB_URL', name: 'eschool-db-url-fs', secretType: 'Secret'],
+                    [envVariable: 'DB_USER', name: 'eschool-db-username', secretType: 'Secret'],
+                    [envVariable: 'DB_PASS', name: 'eschool-db-password', secretType: 'Secret'],
+                    [envVariable: 'LB_ADMIN_NAME', name: 'liquibase-admin-name', secretType: 'Secret'],
+                    [envVariable: 'LB_ADMIN_PASS', name: 'liquibase-admin-password', secretType: 'Secret'],
+                    [envVariable: 'PASSWORD_ENC_KEY', name: 'password-encoding-key', secretType: 'Secret']
+                ])
             }
             steps {
                 sh '''

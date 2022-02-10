@@ -17,7 +17,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy to App Service') {
             options {
                 azureKeyVault([
                     [envVariable: 'TENANT_ID', name: 'appeschool-tenant-id', secretType: 'Secret'],
@@ -27,17 +27,21 @@ pipeline {
                     [envVariable: 'CLIENT_ID', name: 'appeschool-client-id', secretType: 'Secret'],
                     [envVariable: 'CLIENT_SECRET', name: 'appeschool-client-secret', secretType: 'Secret'],
                     [envVariable: 'PUBLISH_URL', name: 'appeschool-publish-url', secretType: 'Secret'],
-                    [envVariable: 'PUBLISH_CREDS', name: 'appeschool-publish-creds', secretType: 'Secret']
+                    [envVariable: 'PUBLISH_DEV_CREDS', name: 'appeschool-publish-dev-creds', secretType: 'Secret'],
+                    [envVariable: 'PUBLISH_STAGE_CREDS', name: 'appeschool-publish-stage-creds', secretType: 'Secret']
                 ])
             }
             steps {
+                script {
+                    env.PUBLISH_CREDS = ("$SLOT" == "dev") ? "$PUBLISH_DEV_CREDS" : "$PUBLISH_STAGE_CREDS"
+                }
                 sh '''
                     set +x
                     az login --service-principal -u $CLIENT_ID -p $CLIENT_SECRET -t $TENANT_ID --output none
                     az account set -s $SUBS_ID
-                    az webapp stop -n $APP_NAME -g $RG_NAME
+                    az webapp stop -n $APP_NAME -g $RG_NAME -s $SLOT
                     curl -T target/eschool.jar $PUBLISH_URL -u "$PUBLISH_CREDS"
-                    az webapp start -n $APP_NAME -g $RG_NAME
+                    az webapp start -n $APP_NAME -g $RG_NAME -s $SLOT
                     az logout
                 '''
             }

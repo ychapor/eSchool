@@ -15,7 +15,6 @@
 <body>
 <form id="loginForm">
     <h1>Форма входу</h1>
-    <h5 id="hostname"></h5>
     <fieldset id="inputs">
         <input id="login" type="text" placeholder="Логін" autofocus required>
         <input id="password" type="password" placeholder="Пароль" required>
@@ -71,7 +70,6 @@
                 }
             });
         })
-        $('#hostname').text(location.host)
     })
 </script>
 </body>

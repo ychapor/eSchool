@@ -4,10 +4,10 @@ echo "Installing TFSwitch"
 wget -N -c https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh
 chmod 755 install.sh
 
-# Install TFSwitch in a location you have permission
+# Install TFSwitch
 ./install.sh -b $(pwd)/.bin
 
-# Set path to executable
+# Set path to TFSwitch executable
 TFSWITCH_PATH=$(pwd)/.bin
 export PATH=$TFSWITCH_PATH:$PATH
 

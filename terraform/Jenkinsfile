@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout(true)
+    }
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('GitHub Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/azure-devops']], userRemoteConfigs: [[credentialsId: 'eschool-github-ssh-key', url: 'git@github.com:ychapor/eSchool.git']]])
+            }
+        }
+        stage('Terraform') {
+            steps {
+                sh './terraformw apply -auto-approve -no-color'
+            }
+        }
+    }
+    /*
+    post {
+        always {
+            cleanWs()
+        }
+    }
+    */
+}

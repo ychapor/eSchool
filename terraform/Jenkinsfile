@@ -15,6 +15,25 @@ pipeline {
                  userRemoteConfigs: [[credentialsId: 'eschool-github-ssh-key', url: 'git@github.com:ychapor/eSchool.git']]])
             }
         }
+        stage('Configure tfstate storage parameters') {
+            steps {
+                sh '''
+                    sed -i -r -e "
+                    s|(resource_group_name.*)xxx|\\1$TF_RG_NAME|
+                    s|(storage_account_name.*)xxx|\\1$TF_SA_NAME|
+                    s|(container_name.*)xxx|\\1$TF_CONTAINER_NAME|
+                    s|(key.*)xxx|\\1$TF_KEY|" ./terraform/main.tf
+                '''
+            }
+        }
+        stage ('Upload *.tfvars file') {
+            steps {
+                script{
+                    def inputFile = input message: 'Please upload your terraform.tfvars file', parameters: [file(name: 'terraform.tfvars')]
+                    writeFile(file: 'terraform/terraform.tfvars', text: inputFile.readToString())
+                }
+            }
+        }
         stage('Terraform Plan') {
             options {
                 azureKeyVault([

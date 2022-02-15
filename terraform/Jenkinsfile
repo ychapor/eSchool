@@ -45,8 +45,7 @@ pipeline {
                 ])
             }
             steps {
-                sh 'cd ./terraform && ./terraformw plan -out=tfplan'
-                sh 'terraform show -json terraform/tfplan | python3 -m json.tool'
+                sh 'cd ./terraform && ./terraformw init; terraform plan -out=tfplan; terraform show -json tfplan | python3 -m json.tool'
             }
         }
         stage ('Approve Terraform Actions') {
@@ -57,8 +56,17 @@ pipeline {
             }
         }
         stage('Terraform Apply') {
+            options {
+                azureKeyVault([
+                    [envVariable: 'ARM_SUBSCRIPTION_ID', name: 'terraform-subscription-id', secretType: 'Secret'],
+                    [envVariable: 'ARM_TENANT_ID', name: 'terraform-tenant-id', secretType: 'Secret'],
+                    [envVariable: 'ARM_CLIENT_ID', name: 'terraform-client-id', secretType: 'Secret'],
+                    [envVariable: 'ARM_CLIENT_SECRET', name: 'terraform-client-secret', secretType: 'Secret'],
+                    [envVariable: 'ARM_ACCESS_KEY', name: 'terraform-blob-access-key', secretType: 'Secret']
+                ])
+            }
             steps {
-                sh 'terraform apply terraform/tfplan -no-color'
+                sh 'cd ./terraform && ./terraformw apply tfplan -no-color'
             }
         }
     }

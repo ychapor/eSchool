@@ -29,6 +29,10 @@ variable "db_subnet_cidr" {
   description = "CIDR notation of subnet for MySQL Flexible Server"
   type        = list(any)
 }
+variable "db_private_dns_name" {
+  description = "Private DNS Zone for database name"
+  type        = string
+}
 variable "db_private_dns_link_name" {
   description = "Private DNS for database link name"
   type        = string

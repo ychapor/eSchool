@@ -17,7 +17,7 @@ resource "azurerm_subnet" "db_subnet" {
 }
 
 resource "azurerm_private_dns_zone" "db_private_dns" {
-  name                = "${var.db_name}.mysql.database.azure.com"
+  name                = var.db_private_dns_name
   resource_group_name = azurerm_resource_group.app_rg.name
 }
 
@@ -52,6 +52,5 @@ resource "azurerm_mysql_flexible_server" "tf_mysql_db" {
   delegated_subnet_id    = azurerm_subnet.db_subnet.id
   private_dns_zone_id    = azurerm_private_dns_zone.db_private_dns.id
   sku_name               = var.tf_mysql_db_sku_name
-  depends_on = [azurerm_private_dns_zone_virtual_network_link.db_private_dns_link,
-  azurerm_key_vault_secret.kv_db_password]
+  depends_on = [azurerm_private_dns_zone_virtual_network_link.db_private_dns_link]
 }

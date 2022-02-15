@@ -22,7 +22,7 @@ pipeline {
                     s|(resource_group_name.*)xxx|\\1$TF_RG_NAME|
                     s|(storage_account_name.*)xxx|\\1$TF_SA_NAME|
                     s|(container_name.*)xxx|\\1$TF_CONTAINER_NAME|
-                    s|(key.*)xxx|\\1$TF_KEY|" ./terraform/main.tf
+                    s|(key.*)xxx|\\1$TF_KEY|" ./terraform/providers.tf
                 '''
             }
         }

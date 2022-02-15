@@ -11,18 +11,36 @@ pipeline {
         }
         stage('GitHub Checkout') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/azure-devops']], userRemoteConfigs: [[credentialsId: 'eschool-github-ssh-key', url: 'git@github.com:ychapor/eSchool.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/azure-devops']],
+                 userRemoteConfigs: [[credentialsId: 'eschool-github-ssh-key', url: 'git@github.com:ychapor/eSchool.git']]])
             }
         }
-        stage('Terraform') {
+        stage('Terraform Plan') {
+            options {
+                azureKeyVault([
+                    [envVariable: 'ARM_SUBSCRIPTION_ID', name: 'terraform-subscription-id', secretType: 'Secret'],
+                    [envVariable: 'ARM_TENANT_ID', name: 'terraform-tenant-id', secretType: 'Secret'],
+                    [envVariable: 'ARM_CLIENT_ID', name: 'terraform-client-id', secretType: 'Secret'],
+                    [envVariable: 'ARM_CLIENT_SECRET', name: 'terraform-client-secret', secretType: 'Secret'],
+                    [envVariable: 'ARM_ACCESS_KEY', name: 'terraform-blob-access-key', secretType: 'Secret']
+                ])
+            }
             steps {
-                sh 'cd ./terraform && ./terraformw apply -auto-approve -no-color'
+                sh 'cd ./terraform && ./terraformw plan -out=tfplan'
+                sh 'terraform show -json terraform/tfplan | python3 -m json.tool'
             }
         }
-    }
-    post {
-        always {
-            cleanWs()
+        stage ('Approve Terraform Actions') {
+            steps {
+                script {
+                    input message: "Please check the Terraform Plan and approve or abort performing actions"
+                }
+            }
+        }
+        stage('Terraform Apply') {
+            steps {
+                sh 'terraform apply terraform/tfplan -no-color'
+            }
         }
     }
 }

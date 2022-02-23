@@ -1,8 +1,10 @@
 # eSchool
+This application is used for educational purposes for training DevOps skills.
 
+### Application description
 **eSchool** is a school management web application based on Spring Boot and developed as graduation project at SoftServe IT Academy.
 
-## Core Features
+### Core Features
 #### Administrator functionality:
 * Add students and teachers to database
 * Create classes and add students into them
